@@ -1,73 +1,49 @@
-# Welcome to your Lovable project
+# 🌟 OneFame - Connect. Collaborate. Create.
 
-## Project info
+> **A modern platform connecting influencers and service providers for seamless collaboration**
 
-**URL**: https://lovable.dev/projects/bd0bb424-dda0-4fce-af2e-b477c65d2592
+[![React](https://img.shields.io/badge/React-18.0+-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18.0+-green.svg)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14.0+-blue.svg)](https://www.postgresql.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0+-blue.svg)](https://tailwindcss.com/)
 
-## How can I edit this code?
+## 🚀 **Overview**
 
-There are several ways of editing your application.
+OneFame is a comprehensive platform that bridges the gap between **influencers** and **service providers**, enabling seamless collaboration, booking, and project management. Whether you're an influencer looking for services or a provider offering your expertise, OneFame makes connections effortless.
 
-**Use Lovable**
+### ✨ **Key Features**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/bd0bb424-dda0-4fce-af2e-b477c65d2592) and start prompting.
+- 🔐 **Secure Authentication** - JWT-based login system with role-based access
+- 👥 **Multi-Role Support** - Influencer, Service Provider, and Admin dashboards
+- 📊 **Dynamic Profiles** - Comprehensive profile management with real-time updates
+- 🔍 **Smart Search** - Advanced filtering and matching algorithms
+- 💬 **Messaging System** - Direct communication between users
+- 📅 **Booking Management** - Complete booking workflow with notifications
+- ⭐ **Review System** - Rating and feedback for quality assurance
+- 📱 **Mobile Responsive** - Optimized for all devices
+- 🎨 **Modern UI** - Clean, intuitive interface with gradient themes
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🛠️ **Tech Stack**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### **Frontend**
+- **React.js 18** with TypeScript
+- **Vite** for fast development and building
+- **Tailwind CSS** for styling and responsiveness
+- **React Router** for client-side routing
+- **Context API** for state management
+- **Shadcn/UI** components for consistent design
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### **Backend**
+- **Node.js** with Express.js framework
+- **PostgreSQL** database with connection pooling
+- **JWT** for authentication and authorization
 
-Follow these steps:
+### **Database Schema**
+- **Users Table** - Complete profile management
+- **Services Table** - Service listings and metadata
+- **Bookings Table** - Booking records and status
+- **Reviews Table** - Rating and feedback system
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/bd0bb424-dda0-4fce-af2e-b477c65d2592) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
