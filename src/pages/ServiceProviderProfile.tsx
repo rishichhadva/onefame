@@ -140,14 +140,14 @@ const ServiceProviderProfile = () => {
                       <p className="text-3xl font-bold">₹299</p>
                     </div>
                     <Button 
-                      className="w-full mb-2 rounded-lg bg-gradient-to-r from-pink-500 to-pink-300 text-white font-bold shadow hover:from-pink-600 hover:to-pink-400 transition"
+                      className="w-full mb-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-300 text-white font-bold shadow hover:from-blue-600 hover:to-cyan-400 transition"
                       size="lg"
                       onClick={() => navigate("/booking")}
                     >
                       <Calendar className="h-4 w-4 mr-2" />
                       Book Now
                     </Button>
-                    <Button variant="outline" className="w-full rounded-lg border-pink-300 text-pink-700 font-bold shadow hover:bg-pink-100 transition" size="lg">
+                    <Button variant="outline" className="w-full rounded-lg border-blue-300 text-blue-700 font-bold shadow hover:bg-blue-100 transition" size="lg">
                       <MessageCircle className="h-4 w-4 mr-2" />
                       Contact
                     </Button>
@@ -176,7 +176,7 @@ const ServiceProviderProfile = () => {
                 {packages.map((pkg) => (
                   <Card 
                     key={pkg.id}
-                    className={`relative rounded-lg border-pink-200 shadow-lg ${selectedPackage === pkg.id ? "ring-2 ring-pink-500" : ""} ${pkg.popular ? "shadow-elegant" : ""}`}
+                    className={`relative rounded-lg border-blue-200 shadow-lg ${selectedPackage === pkg.id ? "ring-2 ring-blue-500" : ""} ${pkg.popular ? "shadow-elegant" : ""}`}
                   >
                     {pkg.popular && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -200,7 +200,7 @@ const ServiceProviderProfile = () => {
                         </ul>
                       </div>
                       <Button 
-                        className="w-full rounded-lg bg-gradient-to-r from-pink-500 to-purple-400 text-white font-bold shadow hover:from-pink-600 hover:to-purple-500 transition mt-auto"
+                        className="w-full rounded-lg bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold shadow hover:from-blue-600 hover:to-cyan-500 transition mt-auto"
                         variant={selectedPackage === pkg.id ? "default" : "outline"}
                         onClick={() => {
                           setSelectedPackage(pkg.id);
@@ -240,7 +240,7 @@ const ServiceProviderProfile = () => {
               </div>
               <div className="space-y-4">
                 {reviews.map((review) => (
-                  <Card key={review.id} className="rounded-lg border-pink-200 shadow-lg">
+                  <Card key={review.id} className="rounded-lg border-blue-200 shadow-lg">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
                         <Avatar>

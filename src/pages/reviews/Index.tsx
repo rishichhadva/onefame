@@ -36,16 +36,16 @@ const ReviewsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-pink-50 p-8 relative">
-      <h1 className="text-4xl font-extrabold text-pink-700 mb-10 text-center">Reviews & Ratings</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-8 relative">
+      <h1 className="text-5xl font-extrabold text-blue-700 mb-12 text-center">Reviews & Ratings</h1>
       <div className="bg-white p-8 rounded-2xl shadow-lg mb-8 max-w-2xl mx-auto">
-        <h2 className="text-2xl font-bold text-pink-600 mb-4">Review Submission Form</h2>
+        <h2 className="text-3xl font-bold text-blue-600 mb-6">Review Submission Form</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input name="reviewer" value={form.reviewer} onChange={handleChange} placeholder="Your Name" className="w-full px-4 py-2 border rounded" required />
           <input name="reviewee" value={form.reviewee} onChange={handleChange} placeholder="Reviewee Name" className="w-full px-4 py-2 border rounded" required />
           <input name="rating" value={form.rating} onChange={handleChange} placeholder="Rating (1-5)" className="w-full px-4 py-2 border rounded" required />
           <textarea name="comment" value={form.comment} onChange={handleChange} placeholder="Comment" className="w-full px-4 py-2 border rounded" required />
-          <button type="submit" className="px-6 py-2 bg-pink-600 text-white rounded-full font-semibold shadow hover:bg-pink-700 transition">Submit Review</button>
+          <button type="submit" className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-2xl font-bold shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all text-lg">Submit Review</button>
         </form>
       </div>
       <div className="bg-white p-8 rounded-2xl shadow-lg max-w-2xl mx-auto">

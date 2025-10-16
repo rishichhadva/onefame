@@ -82,12 +82,12 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-pink-50 p-8 relative">
-      <h1 className="text-4xl font-extrabold text-pink-700 mb-10 text-center">Search</h1>
+    <div className="min-h-screen bg-blue-50 p-8 relative">
+      <h1 className="text-4xl font-extrabold text-blue-700 mb-10 text-center">Search</h1>
       <div className="flex flex-col md:flex-row gap-8 items-start justify-center">
         {/* Sidebar Filters */}
         <div className="w-full md:max-w-xs bg-white rounded-2xl shadow-lg p-6 h-fit md:sticky md:top-24">
-          <h2 className="text-xl font-bold text-pink-600 mb-4">Filters</h2>
+          <h2 className="text-xl font-bold text-blue-600 mb-4">Filters</h2>
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">Category</label>
             <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 border rounded">
@@ -109,8 +109,8 @@ const SearchPage = () => {
               {sampleSorts.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
-          <button onClick={handleApplyFilters} className="w-full px-4 py-2 bg-pink-600 text-white rounded-full font-semibold shadow hover:bg-pink-700 transition mb-2">Apply</button>
-          <button onClick={handleReset} className="w-full px-4 py-2 bg-gray-200 rounded-full font-semibold shadow hover:bg-pink-100 transition mb-2">Reset</button>
+          <button onClick={handleApplyFilters} className="w-full px-4 py-2 bg-blue-600 text-white rounded-full font-semibold shadow hover:bg-blue-700 transition mb-2">Apply</button>
+          <button onClick={handleReset} className="w-full px-4 py-2 bg-gray-200 rounded-full font-semibold shadow hover:bg-blue-100 transition mb-2">Reset</button>
         </div>
         {/* Main Search & Results */}
         <div className="flex-1">
@@ -121,21 +121,21 @@ const SearchPage = () => {
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 placeholder="Search by category, location, budget, rating..."
-                className="w-full px-6 py-3 border-2 border-pink-200 rounded-2xl mb-4 focus:outline-none focus:border-pink-500"
+                className="w-full px-6 py-3 border-2 border-blue-200 rounded-2xl mb-4 focus:outline-none focus:border-blue-500"
               />
-              <button onClick={handleSearch} className="px-6 py-2 bg-pink-600 text-white rounded-full font-semibold shadow hover:bg-pink-700 transition">Search</button>
+              <button onClick={handleSearch} className="px-6 py-2 bg-blue-600 text-white rounded-full font-semibold shadow hover:bg-blue-700 transition">Search</button>
             </div>
             {/* Sample filters display */}
             <div className="flex gap-2 mt-2">
               {sampleCategories.map(c => (
-                <button key={c} onClick={() => setCategory(c)} className={`px-3 py-1 rounded-full text-sm font-semibold ${category === c ? 'bg-pink-600 text-white' : 'bg-pink-100 text-pink-700'}`}>{c}</button>
+                <button key={c} onClick={() => setCategory(c)} className={`px-3 py-1 rounded-full text-sm font-semibold ${category === c ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700'}`}>{c}</button>
               ))}
             </div>
           </div>
           {selectedProfile ? (
             <div className="bg-white rounded-2xl shadow-lg p-8 max-w-xl mx-auto">
-              <button onClick={() => setSelectedProfile(null)} className="mb-4 px-4 py-2 bg-pink-100 text-pink-700 rounded-full font-semibold shadow hover:bg-pink-200">Back to Search</button>
-              <h2 className="text-2xl font-bold text-pink-700 mb-2">{selectedProfile.name}</h2>
+              <button onClick={() => setSelectedProfile(null)} className="mb-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-semibold shadow hover:bg-blue-200">Back to Search</button>
+              <h2 className="text-2xl font-bold text-blue-700 mb-2">{selectedProfile.name}</h2>
               <div className="mb-2"><strong>Role:</strong> {selectedProfile.role}</div>
               <div className="mb-2"><strong>Bio:</strong> {selectedProfile.bio}</div>
               <div className="mb-2"><strong>Interests:</strong> {selectedProfile.interests}</div>
@@ -145,7 +145,7 @@ const SearchPage = () => {
               {selectedProfile.socials && <div className="mb-2"><strong>Socials:</strong> {selectedProfile.socials}</div>}
               {selectedProfile.services && <div className="mb-2"><strong>Services:</strong> {selectedProfile.services}</div>}
               <div className="mt-4 flex gap-4">
-                <button className="px-4 py-2 bg-pink-600 text-white rounded-full font-bold shadow hover:bg-pink-700 transition">Message</button>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-full font-bold shadow hover:bg-blue-700 transition">Message</button>
                 <button className="px-4 py-2 bg-green-600 text-white rounded-full font-bold shadow hover:bg-green-700 transition">Get Service</button>
               </div>
             </div>
@@ -158,30 +158,30 @@ const SearchPage = () => {
                     <div className="mb-4 text-lg">No results found. Here are some sample providers:</div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                       <div className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center">
-                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-pink-200" />
-                        <h3 className="font-extrabold text-xl text-pink-700 mb-2">Sample Photographer</h3>
+                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-blue-200" />
+                        <h3 className="font-extrabold text-xl text-blue-700 mb-2">Sample Photographer</h3>
                         <div className="text-gray-700 mb-1">Provider: Jane Doe</div>
                         <div className="text-gray-500 mb-1">Category: Photography</div>
                         <div className="text-gray-500 mb-1">Location: Mumbai</div>
-                        <div className="text-pink-600 font-bold mb-1">₹1000</div>
+                        <div className="text-blue-600 font-bold mb-1">₹1000</div>
                         <div className="text-yellow-500">Rating: 4.8 ★</div>
                       </div>
                       <div className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center">
-                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-pink-200" />
-                        <h3 className="font-extrabold text-xl text-pink-700 mb-2">Sample Influencer</h3>
+                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-blue-200" />
+                        <h3 className="font-extrabold text-xl text-blue-700 mb-2">Sample Influencer</h3>
                         <div className="text-gray-700 mb-1">Provider: John Smith</div>
                         <div className="text-gray-500 mb-1">Category: Influencer</div>
                         <div className="text-gray-500 mb-1">Location: Delhi</div>
-                        <div className="text-pink-600 font-bold mb-1">₹2000</div>
+                        <div className="text-blue-600 font-bold mb-1">₹2000</div>
                         <div className="text-yellow-500">Rating: 4.9 ★</div>
                       </div>
                       <div className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center">
-                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-pink-200" />
-                        <h3 className="font-extrabold text-xl text-pink-700 mb-2">Sample Fitness Coach</h3>
+                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-blue-200" />
+                        <h3 className="font-extrabold text-xl text-blue-700 mb-2">Sample Fitness Coach</h3>
                         <div className="text-gray-700 mb-1">Provider: Priya Singh</div>
                         <div className="text-gray-500 mb-1">Category: Fitness</div>
                         <div className="text-gray-500 mb-1">Location: Remote</div>
-                        <div className="text-pink-600 font-bold mb-1">₹1500</div>
+                        <div className="text-blue-600 font-bold mb-1">₹1500</div>
                         <div className="text-yellow-500">Rating: 4.7 ★</div>
                       </div>
                     </div>
@@ -190,7 +190,7 @@ const SearchPage = () => {
               ) : (
                 services.map(service => (
                   <div key={service.id} className="bg-white rounded-xl shadow p-4 mb-4 cursor-pointer" onClick={() => setSelectedProfile(service)}>
-                    <h3 className="text-xl font-bold text-pink-700">{service.name}</h3>
+                    <h3 className="text-xl font-bold text-blue-700">{service.name}</h3>
                     <div className="text-gray-700">Provider: {service.provider}</div>
                     <div className="text-gray-500 text-sm">{service.category} | {service.location}</div>
                   </div>

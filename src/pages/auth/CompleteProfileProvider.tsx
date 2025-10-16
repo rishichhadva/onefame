@@ -65,7 +65,7 @@ const CompleteProfileProvider = () => {
           <input type="text" value={skills} onChange={e => setSkills(e.target.value)} placeholder="Skills" required className="w-full px-4 py-2 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-pink-500" />
           <input type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder="Location" required className="w-full px-4 py-2 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-pink-500" />
           <input type="text" value={experience} onChange={e => setExperience(e.target.value)} placeholder="Experience" required className="w-full px-4 py-2 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-pink-500" />
-          <input type="text" value={services} onChange={e => setServices(e.target.value)} placeholder="Services" required className="w-full px-4 py-2 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-pink-500" />
+          <input type="text" value={services} onChange={e => setServices(e.target.value)} placeholder="Offerings" required className="w-full px-4 py-2 border-2 border-pink-200 rounded-xl focus:outline-none focus:border-pink-500" />
           <button type="submit" className="w-full py-2 bg-pink-600 text-white rounded-full font-bold shadow hover:bg-pink-700 transition">Save Profile</button>
           {popup && <div className="mt-2 text-center px-4 py-2 rounded-xl bg-green-100 text-green-700">{popup}</div>}
         </form>
