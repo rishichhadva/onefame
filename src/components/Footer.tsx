@@ -1,16 +1,37 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => (
-  <footer className="bg-gray-50 py-10 mt-16 rounded-2xl mx-4 mb-4 shadow-lg">
-    <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-      <div className="flex gap-6 mb-4 md:mb-0">
-        <a href="/about" className="px-4 py-2 rounded-full text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition font-medium">About</a>
-        <a href="/contact" className="px-4 py-2 rounded-full text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition font-medium">Contact</a>
-        <a href="/terms" className="px-4 py-2 rounded-full text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition font-medium">Terms</a>
-        <a href="/privacy" className="px-4 py-2 rounded-full text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition font-medium">Privacy</a>
+  <footer className="mx-auto mt-20 w-full max-w-6xl rounded-[32px] border border-white/10 bg-white/5 px-6 py-8 text-white shadow-xl shadow-black/40">
+    <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-cyan-400 shadow-lg shadow-purple-900/40">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </div>
+        <div>
+          <p className="text-lg font-semibold tracking-tight">OneFame</p>
+          <p className="text-xs uppercase tracking-[0.4em] text-white/60">Creators marketplace</p>
+        </div>
       </div>
-      <div className="w-full border-t border-blue-100 my-4 md:hidden"></div>
-      <div className="text-gray-500 text-sm text-center md:text-right">© 2025 OneFame. All rights reserved.</div>
+
+      <div className="flex flex-wrap items-center gap-4 text-sm text-white/70">
+        <Link to="/about" className="transition hover:text-white">
+          About
+        </Link>
+        <Link to="/contact" className="transition hover:text-white">
+          Contact
+        </Link>
+        <Link to="/terms" className="transition hover:text-white">
+          Terms
+        </Link>
+        <Link to="/privacy" className="transition hover:text-white">
+          Privacy
+        </Link>
+      </div>
+
+      <p className="text-xs text-white/50">© {new Date().getFullYear()} OneFame. All rights reserved.</p>
     </div>
   </footer>
 );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,71 +26,56 @@ interface Message {
 const Messages = () => {
   const [selectedChat, setSelectedChat] = useState<string>("1");
   const [messageInput, setMessageInput] = useState("");
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  const chats: Chat[] = [
-    {
-      id: "1",
-      name: "Sarah Johnson",
-      avatar: "/placeholder.svg",
-      lastMessage: "That sounds great! When can we schedule?",
-      time: "2m ago",
-      unread: 2,
-    },
-    {
-      id: "2",
-      name: "Mike Photography",
-      avatar: "/placeholder.svg",
-      lastMessage: "I've sent the pricing details",
-      time: "1h ago",
-      unread: 0,
-    },
-    {
-      id: "3",
-      name: "Emma Wilson",
-      avatar: "/placeholder.svg",
-      lastMessage: "Thank you for the amazing work!",
-      time: "3h ago",
-      unread: 0,
-    },
-  ];
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        const res = await fetch('http://localhost:4000/api/chats');
+        const data = await res.json();
+        setChats(data);
+        if (data && data.length > 0) setSelectedChat(data[0].id);
+      } catch (err) {
+        console.error('Failed to load chats', err);
+      }
+    };
+    fetchChats();
+  }, []);
 
-  const messages: Message[] = [
-    {
-      id: "1",
-      sender: "other",
-      content: "Hi! I'm interested in booking your photography services for next week.",
-      time: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "me",
-      content: "Hello! I'd be happy to help. What type of shoot are you looking for?",
-      time: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "other",
-      content: "I need professional photos for my Instagram campaign. Do you have availability?",
-      time: "10:35 AM",
-    },
-    {
-      id: "4",
-      sender: "me",
-      content: "Yes! I have slots available. Let me send you my pricing and we can schedule.",
-      time: "10:36 AM",
-    },
-    {
-      id: "5",
-      sender: "other",
-      content: "That sounds great! When can we schedule?",
-      time: "10:38 AM",
-    },
-  ];
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!selectedChat) return;
+      try {
+        const res = await fetch(`http://localhost:4000/api/chats/${selectedChat}/messages`);
+        const data = await res.json();
+        setMessages(data);
+      } catch (err) {
+        console.error('Failed to load messages', err);
+        setMessages([]);
+      }
+    };
+    fetchMessages();
+  }, [selectedChat]);
+
+  // chats and messages are loaded dynamically from backend
 
   const handleSendMessage = () => {
-    if (messageInput.trim()) {
-      setMessageInput("");
-    }
+    if (!messageInput.trim() || !selectedChat) return;
+    const payload = { chatId: selectedChat, sender: 'me', content: messageInput };
+    fetch('http://localhost:4000/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.message) {
+          setMessages((prev) => [...prev, data.message]);
+        }
+      })
+      .catch((err) => console.error(err));
+    setMessageInput("");
   };
 
   return (

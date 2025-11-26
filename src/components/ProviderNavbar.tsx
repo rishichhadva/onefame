@@ -1,12 +1,20 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { CalendarDays, Briefcase, MessageSquare } from "lucide-react";
 
-const Navbar = () => {
-  const { user, login, logout } = useAuth();
+const ProviderNavbar = () => {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const dropdownRef = useRef(null);
+
+  const handleLogout = () => {
+    logout();
+    setShowLogoutConfirm(false);
+    navigate('/');
+  };
 
   return (
     <nav className="sticky top-4 z-50 mx-auto mt-4 mb-8 w-full max-w-6xl rounded-full border border-white/10 bg-[#050916]/80 px-5 py-3 text-white shadow-lg shadow-black/40 backdrop-blur">
@@ -24,31 +32,39 @@ const Navbar = () => {
           <Link className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white" to="/">
             Home
           </Link>
-          {user && user.role !== "admin" && (
-            <>
-              <Link 
-                className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white" 
-                to={
-                  user.role === "influencer"
-                    ? "/influencer/dashboard"
-                    : user.role === "provider"
-                    ? "/provider/dashboard"
-                    : "/dashboard"
-                }
-              >
-                Dashboard
-              </Link>
-              <Link 
-                className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white" 
-                to="/booking"
-              >
-                {user.role === "provider" ? "Services" : "Booking"}
-              </Link>
-              <Link className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white" to="/chat">
-                Chat
-              </Link>
-            </>
-          )}
+          <Link 
+            className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white" 
+            to="/provider/dashboard"
+          >
+            Dashboard
+          </Link>
+          <Link 
+            className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white" 
+            to="/booking"
+          >
+            Services
+          </Link>
+          <Link 
+            className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white flex items-center gap-1.5" 
+            to="/provider/calendar"
+          >
+            <CalendarDays className="h-4 w-4" />
+            Calendar
+          </Link>
+          <Link 
+            className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white flex items-center gap-1.5" 
+            to="/provider/ProvideServices"
+          >
+            <Briefcase className="h-4 w-4" />
+            My Services
+          </Link>
+          <Link 
+            className="rounded-full px-4 py-2 text-white/70 transition hover:bg-white/10 hover:text-white flex items-center gap-1.5" 
+            to="/chat"
+          >
+            <MessageSquare className="h-4 w-4" />
+            Messages
+          </Link>
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
@@ -69,37 +85,26 @@ const Navbar = () => {
                   </div>
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">
-                    {user.name?.charAt(0).toUpperCase() || 'U'}
+                    {user.name?.charAt(0).toUpperCase() || 'P'}
                   </div>
                 )}
-                <span>Hey, {user.name.split(" ")[0]}</span>
+                <span>Hey, {user.name?.split(" ")[0] || 'Provider'}</span>
               </button>
               {dropdownOpen && (
                 <div className="absolute right-0 mt-3 w-48 rounded-2xl border border-white/10 bg-[#080f1f] p-1 text-sm shadow-xl">
                   <button
                     onClick={() => {
                       setDropdownOpen(false);
-                      if (user.role === "admin") {
-                        navigate("/admin/dashboard");
-                      } else {
-                        navigate(
-                          user.role === "provider"
-                            ? "/provider/profile"
-                            : user.role === "influencer"
-                            ? "/influencer/profile"
-                            : "/user/profile",
-                        );
-                      }
+                      navigate("/provider/profile");
                     }}
                     className="w-full rounded-xl px-4 py-3 text-left text-white/80 transition hover:bg-white/5"
                   >
-                    {user.role === "admin" ? "Dashboard" : "Edit Profile"}
+                    Edit Profile
                   </button>
                   <button
                     onClick={() => {
-                      logout();
-                      navigate("/");
                       setDropdownOpen(false);
+                      setShowLogoutConfirm(true);
                     }}
                     className="w-full rounded-xl px-4 py-3 text-left text-white/80 transition hover:bg-white/5"
                   >
@@ -122,10 +127,32 @@ const Navbar = () => {
             </>
           )}
         </div>
-
       </div>
+
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur z-50">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-2xl text-center backdrop-blur">
+            <p className="mb-4 text-lg font-semibold text-white">Do you want to logout?</p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={handleLogout}
+                className="px-6 py-2 bg-gradient-to-r from-purple-500 to-cyan-400 text-white rounded-full font-semibold"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="px-6 py-2 bg-white/10 text-white rounded-full font-semibold border border-white/20"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
 
-export default Navbar;
+export default ProviderNavbar;
+

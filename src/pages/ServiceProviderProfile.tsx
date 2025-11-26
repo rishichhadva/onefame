@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,9 @@ import { Star, MapPin, Calendar, Check, MessageCircle } from "lucide-react";
 const ServiceProviderProfile = () => {
   const navigate = useNavigate();
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+  const [service, setService] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const packages = [
     {
@@ -89,6 +92,26 @@ const ServiceProviderProfile = () => {
     },
   ];
 
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (!id) return;
+    const fetchService = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`http://localhost:4000/api/services/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setService(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch service', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchService();
+  }, [searchParams]);
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -142,7 +165,7 @@ const ServiceProviderProfile = () => {
                     <Button 
                       className="w-full mb-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-300 text-white font-bold shadow hover:from-blue-600 hover:to-cyan-400 transition"
                       size="lg"
-                      onClick={() => navigate("/booking")}
+                      onClick={() => navigate("/booking", { state: { provider: service?.provider || 'Mike Johnson' } })}
                     >
                       <Calendar className="h-4 w-4 mr-2" />
                       Book Now
@@ -204,7 +227,7 @@ const ServiceProviderProfile = () => {
                         variant={selectedPackage === pkg.id ? "default" : "outline"}
                         onClick={() => {
                           setSelectedPackage(pkg.id);
-                          navigate("/booking", { state: { package: pkg } });
+                          navigate("/booking", { state: { package: pkg, provider: service?.provider || 'Mike Johnson' } });
                         }}
                       >
                         {selectedPackage === pkg.id ? "Selected" : "Select Package"}

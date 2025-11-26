@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,92 +7,60 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71% 4%;
+    --background: 228 25% 6%;
+    --foreground: 210 17% 94%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card: 228 28% 12%;
+    --card-foreground: 210 17% 94%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
+    --popover: 228 28% 12%;
+    --popover-foreground: 210 17% 94%;
 
-    --primary: 243 75% 59%;
+    --primary: 258 92% 66%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 224 71% 4%;
+    --secondary: 190 95% 58%;
+    --secondary-foreground: 0 0% 8%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 228 20% 16%;
+    --muted-foreground: 220 10% 65%;
 
-    --accent: 330 81% 60%;
+    --accent: 329 85% 67%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 2 90% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 243 75% 59%;
+    --border: 228 23% 18%;
+    --input: 228 23% 18%;
+    --ring: 258 92% 66%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Custom design tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(188 94% 42%));
-    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60% / 0.1), hsl(188 94% 42% / 0.1));
-    --shadow-sm: 0 2px 8px hsl(224 71% 4% / 0.04);
-    --shadow-md: 0 4px 16px hsl(224 71% 4% / 0.08);
-    --shadow-lg: 0 8px 32px hsl(224 71% 4% / 0.12);
-    --shadow-glow: 0 0 24px hsl(243 75% 59% / 0.3);
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #0ea5e9 55%, #f472b6 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(124, 58, 237, 0.3) 0%, rgba(14, 165, 233, 0.2) 50%, rgba(244, 114, 182, 0.18) 100%);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 243 75% 59%;
+    --shadow-sm: 0 10px 25px rgba(8, 12, 24, 0.35);
+    --shadow-md: 0 20px 45px rgba(14, 165, 233, 0.25);
+    --shadow-lg: 0 30px 70px rgba(124, 58, 237, 0.35);
+    --shadow-glow: 0 0 40px rgba(94, 234, 212, 0.5);
+    --transition-smooth: all 0.28s cubic-bezier(0.19, 1, 0.22, 1);
+
+    --sidebar-background: 228 25% 6%;
+    --sidebar-foreground: 210 17% 94%;
+    --sidebar-primary: 258 92% 66%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 243 75% 59%;
+    --sidebar-accent: 226 26% 16%;
+    --sidebar-accent-foreground: 210 17% 94%;
+    --sidebar-border: 228 23% 18%;
+    --sidebar-ring: 258 92% 66%;
   }
 
-  .dark {
-    --background: 224 71% 4%;
-    --foreground: 0 0% 100%;
-
-    --card: 224 65% 8%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 224 65% 8%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 243 75% 59%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 215 28% 17%;
-    --muted-foreground: 220 9% 65%;
-
-    --accent: 330 81% 60%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 243 75% 59%;
-
-    --sidebar-background: 224 65% 8%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 243 75% 59%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 243 75% 59%;
+  /* Global typographic setup */
+  html {
+    font-family: 'Space Grotesk', 'Syne', 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -101,5 +71,10 @@
 
   body {
     @apply bg-background text-foreground;
+    background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.18), transparent 45%),
+      radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.18), transparent 35%),
+      #030711;
+    min-height: 100vh;
+    color: #f8fafc;
   }
 }

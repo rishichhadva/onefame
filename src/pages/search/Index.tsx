@@ -1,205 +1,341 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Filter,
+  MapPin,
+  Search as SearchIcon,
+  Star,
+  X,
+  ArrowRight,
+  RotateCcw,
+} from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
-const sampleCategories = ['Photography', 'Influencer', 'Music', 'Fitness'];
-const sampleLocations = ['Mumbai', 'Delhi', 'Bangalore', 'Remote'];
-const sampleSorts = ['Price: Low to High', 'Price: High to Low', 'Rating: High to Low'];
+const fetchServices = async () => {
+  const res = await fetch("http://localhost:4000/api/services");
+  if (!res.ok) throw new Error("Failed to load services");
+  return res.json();
+};
 
 const SearchPage = () => {
-  const [query, setQuery] = React.useState("");
-  const [category, setCategory] = React.useState("");
-  const [location, setLocation] = React.useState("");
-  const [sort, setSort] = React.useState("");
-  const [services, setServices] = React.useState([]);
-  const [selectedProfile, setSelectedProfile] = React.useState(null);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const [query, setQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [locationFilter, setLocationFilter] = useState("All");
+  const [sortFilter, setSortFilter] = useState("None");
+  const [selected, setSelected] = useState<any | null>(null);
 
-  React.useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token || !user) {
-      // Optionally, navigate('/auth/Login');
-      // But do NOT log out or clear token on navigation
-    }
-    fetchAll();
-  }, [user]);
+  const { data: services = [], isLoading, isError } = useQuery({
+    queryKey: ["services", "marketplace"],
+    queryFn: fetchServices,
+  });
 
-  const fetchAll = async () => {
-    try {
-      const res = await fetch('http://localhost:4000/api/services');
-      setServices(await res.json());
-    } catch {
-      setServices([]);
+  const categories = useMemo(() => {
+    const unique = new Set(services.map((s: any) => s.category).filter(Boolean));
+    return ["All", ...Array.from(unique)];
+  }, [services]);
+
+  const locations = useMemo(() => {
+    const unique = new Set(services.map((s: any) => s.location).filter(Boolean));
+    return ["All", ...Array.from(unique)];
+  }, [services]);
+
+  const quickFilters = ["Photography", "Influencer", "Music", "Fitness"];
+
+  const filtered = useMemo(() => {
+    let results = [...services];
+    
+    if (query.trim()) {
+      results = results.filter((service: any) => {
+        const haystack = `${service.name} ${service.provider} ${service.category} ${service.location} ${service.price}`.toLowerCase();
+        return haystack.includes(query.toLowerCase());
+      });
     }
+    
+    if (categoryFilter !== "All") {
+      results = results.filter((service: any) => service.category === categoryFilter);
+    }
+    
+    if (locationFilter !== "All") {
+      results = results.filter((service: any) => service.location === locationFilter);
+    }
+    
+    results = results.sort((a: any, b: any) => {
+      if (sortFilter === "Price Low to High") return parseFloat(a.price) - parseFloat(b.price);
+      if (sortFilter === "Price High to Low") return parseFloat(b.price) - parseFloat(a.price);
+      if (sortFilter === "Rating") return parseFloat(b.rating || 0) - parseFloat(a.rating || 0);
+      return 0;
+    });
+    
+    return results;
+  }, [services, query, categoryFilter, locationFilter, sortFilter]);
+
+  const handleApplyFilters = () => {
+    // Filters are already applied via useMemo
   };
 
-  const handleSearch = async () => {
-    try {
-      const res = await fetch('http://localhost:4000/api/services');
-      let all = await res.json();
-      if (query) {
-        all = all.filter(s =>
-          s.name.toLowerCase().includes(query.toLowerCase()) ||
-          (s.provider && s.provider.toLowerCase().includes(query.toLowerCase())) ||
-          s.category.toLowerCase().includes(query.toLowerCase()) ||
-          s.location.toLowerCase().includes(query.toLowerCase())
-        );
-      }
-      setServices(all);
-    } catch {
-      setServices([]);
-    }
-  };
-
-  const handleApplyFilters = async () => {
-    try {
-      const res = await fetch('http://localhost:4000/api/services');
-      let all = await res.json();
-      if (category) {
-        all = all.filter(s => s.category === category);
-      }
-      if (location) {
-        all = all.filter(s => s.location === location);
-      }
-      if (sort) {
-        if (sort === 'Price: Low to High') all = all.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-        if (sort === 'Price: High to Low') all = all.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-        if (sort === 'Rating: High to Low') all = all.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
-      }
-      setServices(all);
-    } catch {
-      setServices([]);
-    }
-  };
-
-  const handleReset = async () => {
+  const handleReset = () => {
+    setCategoryFilter("All");
+    setLocationFilter("All");
+    setSortFilter("None");
     setQuery("");
-    setCategory("");
-    setLocation("");
-    setSort("");
-    fetchAll();
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 p-8 relative">
-      <h1 className="text-4xl font-extrabold text-blue-700 mb-10 text-center">Search</h1>
-      <div className="flex flex-col md:flex-row gap-8 items-start justify-center">
-        {/* Sidebar Filters */}
-        <div className="w-full md:max-w-xs bg-white rounded-2xl shadow-lg p-6 h-fit md:sticky md:top-24">
-          <h2 className="text-xl font-bold text-blue-600 mb-4">Filters</h2>
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">Category</label>
-            <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 border rounded">
-              <option value="">All</option>
-              {sampleCategories.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">Location</label>
-            <select value={location} onChange={e => setLocation(e.target.value)} className="w-full px-3 py-2 border rounded">
-              <option value="">All</option>
-              {sampleLocations.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">Sort By</label>
-            <select value={sort} onChange={e => setSort(e.target.value)} className="w-full px-3 py-2 border rounded">
-              <option value="">None</option>
-              {sampleSorts.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
-          <button onClick={handleApplyFilters} className="w-full px-4 py-2 bg-blue-600 text-white rounded-full font-semibold shadow hover:bg-blue-700 transition mb-2">Apply</button>
-          <button onClick={handleReset} className="w-full px-4 py-2 bg-gray-200 rounded-full font-semibold shadow hover:bg-blue-100 transition mb-2">Reset</button>
-        </div>
-        {/* Main Search & Results */}
-        <div className="flex-1">
-          <div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
-            <div className="flex gap-4">
-              <input
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Search by category, location, budget, rating..."
-                className="w-full px-6 py-3 border-2 border-blue-200 rounded-2xl mb-4 focus:outline-none focus:border-blue-500"
-              />
-              <button onClick={handleSearch} className="px-6 py-2 bg-blue-600 text-white rounded-full font-semibold shadow hover:bg-blue-700 transition">Search</button>
-            </div>
-            {/* Sample filters display */}
-            <div className="flex gap-2 mt-2">
-              {sampleCategories.map(c => (
-                <button key={c} onClick={() => setCategory(c)} className={`px-3 py-1 rounded-full text-sm font-semibold ${category === c ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700'}`}>{c}</button>
-              ))}
-            </div>
-          </div>
-          {selectedProfile ? (
-            <div className="bg-white rounded-2xl shadow-lg p-8 max-w-xl mx-auto">
-              <button onClick={() => setSelectedProfile(null)} className="mb-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-semibold shadow hover:bg-blue-200">Back to Search</button>
-              <h2 className="text-2xl font-bold text-blue-700 mb-2">{selectedProfile.name}</h2>
-              <div className="mb-2"><strong>Role:</strong> {selectedProfile.role}</div>
-              <div className="mb-2"><strong>Bio:</strong> {selectedProfile.bio}</div>
-              <div className="mb-2"><strong>Interests:</strong> {selectedProfile.interests}</div>
-              <div className="mb-2"><strong>Skills:</strong> {selectedProfile.skills}</div>
-              <div className="mb-2"><strong>Location:</strong> {selectedProfile.location}</div>
-              <div className="mb-2"><strong>Experience:</strong> {selectedProfile.experience}</div>
-              {selectedProfile.socials && <div className="mb-2"><strong>Socials:</strong> {selectedProfile.socials}</div>}
-              {selectedProfile.services && <div className="mb-2"><strong>Services:</strong> {selectedProfile.services}</div>}
-              <div className="mt-4 flex gap-4">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-full font-bold shadow hover:bg-blue-700 transition">Message</button>
-                <button className="px-4 py-2 bg-green-600 text-white rounded-full font-bold shadow hover:bg-green-700 transition">Get Service</button>
+    <div className="relative min-h-screen bg-[#030711] text-white">
+      <div className="pointer-events-none absolute inset-0 opacity-40">
+        <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/4 h-80 w-80 rounded-full bg-purple-500/20 blur-[120px]" />
+      </div>
+      <Navbar />
+      <main className="relative z-10 mx-auto max-w-7xl px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6">
+          {/* Left Sidebar - Filters */}
+          <aside className="space-y-6">
+            <div style={{ backgroundColor: '#000000', borderColor: 'rgba(255, 255, 255, 0.1)' }} className="rounded-2xl border p-6 shadow-xl">
+              <h2 style={{ color: '#ffffff' }} className="text-xl font-bold mb-6">Filters</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label style={{ color: '#ffffff' }} className="block text-sm font-bold mb-2">Category</label>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    style={{ 
+                      color: '#ffffff', 
+                      backgroundColor: '#030711',
+                      borderColor: 'rgba(255, 255, 255, 0.3)'
+                    }}
+                    className="w-full rounded-lg border px-4 py-2.5 focus:border-purple-400 focus:outline-none font-semibold"
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat} style={{ backgroundColor: '#030711', color: '#ffffff' }}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ color: '#ffffff' }} className="block text-sm font-bold mb-2">Location</label>
+                  <select
+                    value={locationFilter}
+                    onChange={(e) => setLocationFilter(e.target.value)}
+                    style={{ 
+                      color: '#ffffff', 
+                      backgroundColor: '#030711',
+                      borderColor: 'rgba(255, 255, 255, 0.3)'
+                    }}
+                    className="w-full rounded-lg border px-4 py-2.5 focus:border-purple-400 focus:outline-none font-semibold"
+                  >
+                    {locations.map((loc) => (
+                      <option key={loc} value={loc} style={{ backgroundColor: '#030711', color: '#ffffff' }}>
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ color: '#ffffff' }} className="block text-sm font-bold mb-2">Sort By</label>
+                  <select
+                    value={sortFilter}
+                    onChange={(e) => setSortFilter(e.target.value)}
+                    style={{ 
+                      color: '#ffffff', 
+                      backgroundColor: '#030711',
+                      borderColor: 'rgba(255, 255, 255, 0.3)'
+                    }}
+                    className="w-full rounded-lg border px-4 py-2.5 focus:border-purple-400 focus:outline-none font-semibold"
+                  >
+                    <option value="None" style={{ backgroundColor: '#030711', color: '#ffffff' }}>None</option>
+                    <option value="Price Low to High" style={{ backgroundColor: '#030711', color: '#ffffff' }}>Price Low to High</option>
+                    <option value="Price High to Low" style={{ backgroundColor: '#030711', color: '#ffffff' }}>Price High to Low</option>
+                    <option value="Rating" style={{ backgroundColor: '#030711', color: '#ffffff' }}>Rating</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="mt-6 space-y-3">
+                <button
+                  onClick={handleApplyFilters}
+                  className="w-full rounded-lg bg-gradient-to-r from-purple-500 to-purple-400 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/40 transition hover:scale-105"
+                >
+                  Apply Filters
+                </button>
+                <button
+                  onClick={handleReset}
+                  style={{ backgroundColor: '#030711', color: '#ffffff', borderColor: 'rgba(255, 255, 255, 0.2)' }}
+                  className="w-full rounded-lg border px-4 py-2.5 text-sm font-semibold transition hover:bg-white/10"
+                >
+                  <RotateCcw className="h-4 w-4 inline mr-2" />
+                  Reset
+                </button>
               </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {services.length === 0 ? (
-                <>
-                  {/* Sample Providers/Services if no results */}
-                  <div className="col-span-3 text-center text-gray-400 py-10">
-                    <div className="mb-4 text-lg">No results found. Here are some sample providers:</div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                      <div className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center">
-                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-blue-200" />
-                        <h3 className="font-extrabold text-xl text-blue-700 mb-2">Sample Photographer</h3>
-                        <div className="text-gray-700 mb-1">Provider: Jane Doe</div>
-                        <div className="text-gray-500 mb-1">Category: Photography</div>
-                        <div className="text-gray-500 mb-1">Location: Mumbai</div>
-                        <div className="text-blue-600 font-bold mb-1">₹1000</div>
-                        <div className="text-yellow-500">Rating: 4.8 ★</div>
-                      </div>
-                      <div className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center">
-                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-blue-200" />
-                        <h3 className="font-extrabold text-xl text-blue-700 mb-2">Sample Influencer</h3>
-                        <div className="text-gray-700 mb-1">Provider: John Smith</div>
-                        <div className="text-gray-500 mb-1">Category: Influencer</div>
-                        <div className="text-gray-500 mb-1">Location: Delhi</div>
-                        <div className="text-blue-600 font-bold mb-1">₹2000</div>
-                        <div className="text-yellow-500">Rating: 4.9 ★</div>
-                      </div>
-                      <div className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center">
-                        <img src="/placeholder.svg" alt="Sample" className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-blue-200" />
-                        <h3 className="font-extrabold text-xl text-blue-700 mb-2">Sample Fitness Coach</h3>
-                        <div className="text-gray-700 mb-1">Provider: Priya Singh</div>
-                        <div className="text-gray-500 mb-1">Category: Fitness</div>
-                        <div className="text-gray-500 mb-1">Location: Remote</div>
-                        <div className="text-blue-600 font-bold mb-1">₹1500</div>
-                        <div className="text-yellow-500">Rating: 4.7 ★</div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                services.map(service => (
-                  <div key={service.id} className="bg-white rounded-xl shadow p-4 mb-4 cursor-pointer" onClick={() => setSelectedProfile(service)}>
-                    <h3 className="text-xl font-bold text-blue-700">{service.name}</h3>
-                    <div className="text-gray-700">Provider: {service.provider}</div>
-                    <div className="text-gray-500 text-sm">{service.category} | {service.location}</div>
-                  </div>
-                ))
-              )}
+          </aside>
+
+          {/* Right Content - Search and Results */}
+          <div className="space-y-6">
+            {/* Search Bar */}
+            <div className="flex gap-3">
+              <div style={{ backgroundColor: '#000000', borderColor: 'rgba(255, 255, 255, 0.1)' }} className="flex-1 flex items-center rounded-xl border px-4">
+                <SearchIcon style={{ color: '#ffffff' }} className="h-5 w-5 mr-3 opacity-60" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search by category, location, budget, rating..."
+                  style={{ color: '#ffffff' }}
+                  className="flex-1 h-12 bg-transparent placeholder:text-white/40 focus:outline-none font-medium"
+                />
+              </div>
+              <button className="rounded-xl bg-gradient-to-r from-purple-500 to-purple-400 p-3 text-white shadow-lg shadow-purple-900/40 transition hover:scale-105">
+                <ArrowRight className="h-5 w-5" />
+              </button>
             </div>
-          )}
+
+            {/* Quick Filter Tags */}
+            <div className="flex flex-wrap gap-3">
+              {quickFilters.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => {
+                    setCategoryFilter(tag);
+                    setQuery("");
+                  }}
+                  style={{
+                    backgroundColor: categoryFilter === tag ? '#a855f7' : 'rgba(255, 255, 255, 0.1)',
+                    color: '#ffffff',
+                    borderColor: 'rgba(255, 255, 255, 0.2)'
+                  }}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition border ${
+                    categoryFilter === tag ? 'font-semibold' : 'hover:bg-white/20'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+
+            {/* Results Grid */}
+            {isLoading && (
+              <div style={{ backgroundColor: '#000000', borderColor: 'rgba(255, 255, 255, 0.1)' }} className="rounded-2xl border p-12 text-center">
+                <span style={{ color: '#ffffff' }} className="opacity-70">Loading services...</span>
+              </div>
+            )}
+            
+            {isError && (
+              <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-6 text-rose-50">
+                Couldn't load services. Please try again.
+              </div>
+            )}
+            
+            {!isLoading && !isError && filtered.length === 0 && (
+              <div style={{ backgroundColor: '#000000', borderColor: 'rgba(255, 255, 255, 0.1)' }} className="rounded-2xl border p-12 text-center">
+                <span style={{ color: '#ffffff' }} className="opacity-70">No services found. Try adjusting your filters.</span>
+              </div>
+            )}
+            
+            {!isLoading && !isError && filtered.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filtered.map((service: any) => (
+                  <div
+                    key={service.id || service.name}
+                    style={{ backgroundColor: '#000000', borderColor: 'rgba(255, 255, 255, 0.1)' }}
+                    className="group rounded-2xl border p-6 shadow-lg shadow-black/40 hover:shadow-xl hover:border-purple-400/40 transition hover:-translate-y-1 cursor-pointer"
+                    onClick={() => setSelected(service)}
+                  >
+                    <h3 style={{ color: '#ffffff' }} className="text-lg font-bold mb-1">{service.name}</h3>
+                    <p style={{ color: '#ffffff' }} className="text-sm mb-3 font-medium opacity-90">Provider: {service.provider}</p>
+                    <p style={{ color: '#e5e7eb' }} className="text-xs mb-4 uppercase tracking-wide opacity-70">
+                      {service.category || "General"} | {service.location || "Remote"}
+                    </p>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-1" style={{ color: '#fbbf24' }}>
+                        <Star className="h-4 w-4 fill-current" />
+                        <span style={{ color: '#ffffff' }} className="text-sm font-semibold">Rating: {service.rating || "4.8"}</span>
+                      </div>
+                      <span style={{ color: '#c084fc' }} className="text-lg font-bold">₹{service.price}</span>
+                    </div>
+                    <button className="w-full rounded-lg bg-gradient-to-r from-purple-500 to-purple-400 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple-900/30 transition hover:scale-105">
+                      View Profile
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
+
+      {/* Modal */}
+      {selected && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur">
+          <div style={{ backgroundColor: '#000000', borderColor: 'rgba(255, 255, 255, 0.15)' }} className="relative w-full max-w-3xl rounded-2xl border p-8 shadow-2xl">
+            <button
+              onClick={() => setSelected(null)}
+              style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }}
+              className="absolute right-6 top-6 rounded-full border p-2 text-white/70 hover:bg-white/10"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <p className="text-xs uppercase tracking-[0.4em] text-white/40 mb-2">Profile</p>
+                <h2 style={{ color: '#ffffff' }} className="text-3xl font-bold mb-2">{selected.name}</h2>
+                <p style={{ color: '#ffffff' }} className="opacity-70 mb-6">{selected.provider}</p>
+                <div className="space-y-3 text-sm" style={{ color: '#ffffff' }}>
+                  <p className="opacity-80">
+                    <span className="opacity-50">Category:</span> {selected.category || "General"}
+                  </p>
+                  <p className="opacity-80">
+                    <span className="opacity-50">Location:</span> {selected.location || "Remote"}
+                  </p>
+                  <p className="opacity-80">
+                    <span className="opacity-50">Services:</span> {selected.services || selected.name}
+                  </p>
+                  <p className="opacity-80">
+                    <span className="opacity-50">Starting at:</span> ₹{selected.price}
+                  </p>
+                  <p className="opacity-80">
+                    <span className="opacity-50">Rating:</span> {selected.rating || "4.9"} / 5
+                  </p>
+                </div>
+              </div>
+              <div style={{ backgroundColor: '#030711', borderColor: 'rgba(255, 255, 255, 0.1)' }} className="rounded-2xl border p-6">
+                <p style={{ color: '#ffffff' }} className="text-sm mb-6 opacity-70">
+                  Ready to collaborate? Lock dates, send briefs, or just start a chat.
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => {
+                      navigate("/booking", { state: { provider: selected.provider } });
+                      setSelected(null);
+                    }}
+                    className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-purple-400 px-4 py-3 text-center font-semibold text-white shadow-lg shadow-purple-900/40 transition hover:scale-105"
+                  >
+                    Book this creator
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/chat/index");
+                      setSelected(null);
+                    }}
+                    style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }}
+                    className="w-full rounded-xl border px-4 py-3 text-center font-semibold text-white/80 transition hover:bg-white/10"
+                  >
+                    Start a chat
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Footer />
     </div>
   );
 };

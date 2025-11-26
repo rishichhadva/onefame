@@ -1,109 +1,233 @@
-import React from 'react';
-import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Mail, Lock, Smartphone, Sparkles, ArrowRight } from "lucide-react";
 
-const Login = () => (
-  (() => {
-    const location = useLocation();
-    const [email, setEmail] = useState(location.state?.email || '');
-    const [password, setPassword] = useState('');
-    const [popup, setPopup] = useState('');
-    const { login, setUser } = useAuth();
-    const navigate = useNavigate();
+const Login = () => {
+  const location = useLocation();
+  const [email, setEmail] = useState(location.state?.email || "");
+  const [password, setPassword] = useState("");
+  const [popup, setPopup] = useState("");
+  const { login, setUser } = useAuth();
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setPopup('');
-      try {
-        // Special case for admin login
-        if (email === 'admin@onefame.com' && password === 'admin12') {
-          localStorage.setItem('token', 'admin-token');
-          login('admin', 'Admin');
-          setPopup('Logged in as admin! Redirecting...');
-          setTimeout(() => navigate('/admin/dashboard'), 1200);
-          return;
-        }
-        const res = await fetch('http://localhost:4000/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Login failed');
-        localStorage.setItem('token', data.token);
-        // Fetch full user profile after login
-        const profileRes = await fetch('http://localhost:4000/api/profile', {
-          method: 'GET',
-          headers: { 'Authorization': `Bearer ${data.token}` }
-        });
-        const profileData = await profileRes.json();
-        const profile = profileData.user || profileData;
-        setUser(profile);
-        // After successful login, always redirect to hero page
-        setPopup('Logged in successfully! Redirecting...');
-        setTimeout(() => navigate('/'), 1200);
-      } catch (err) {
-        setPopup(err.message);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPopup("");
+    try {
+      // Always use the backend login endpoint, even for admin
+      const res = await fetch("http://localhost:4000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Login failed");
+      
+      // Store the real JWT token from backend
+      if (!data.token) {
+        throw new Error("No token received from server");
       }
-    };
+      
+      localStorage.setItem("token", data.token);
+      
+      // Fetch user profile to get full user data
+      const profileRes = await fetch("http://localhost:4000/api/profile", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${data.token}` },
+      });
+      
+      if (!profileRes.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+      
+      const profileData = await profileRes.json();
+      const profile = profileData.user || profileData || data.user;
+      
+      setUser(profile);
+      
+      // Redirect based on role
+      if (profile.role === 'admin') {
+        setPopup("Logged in as admin! Redirecting...");
+        setTimeout(() => navigate("/admin/dashboard"), 1200);
+      } else {
+        setPopup("Logged in successfully! Redirecting...");
+        setTimeout(() => navigate("/"), 1000);
+      }
+    } catch (err: any) {
+      setPopup(err.message || "Login failed");
+    }
+  };
 
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-cyan-50 to-indigo-50">
-        <div className="w-full max-w-md p-10 space-y-8 bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100">
-          <div className="flex flex-col items-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
-              <svg width="32" height="32" fill="white" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+  const handleGoogle = async () => {
+    try {
+      setPopup("");
+      const provider = new GoogleAuthProvider();
+      
+      // Try popup first, fallback to redirect if blocked
+      let result;
+      try {
+        result = await signInWithPopup(auth, provider);
+      } catch (popupError: any) {
+        // If popup is blocked, use redirect instead
+        if (popupError.code === 'auth/popup-blocked' || popupError.code === 'auth/popup-closed-by-user') {
+          setPopup("Popup blocked. Redirecting to Google sign-in...");
+          await signInWithRedirect(auth, provider);
+          return; // signInWithRedirect will navigate away, so we return here
+        }
+        throw popupError; // Re-throw if it's a different error
+      }
+      
+      const idToken = await result.user.getIdToken();
+      const res = await fetch("http://localhost:4000/api/auth/firebase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Auth failed");
+      localStorage.setItem("token", data.token);
+      setUser(data.user);
+      
+      // Redirect to role selection if user needs to choose role
+      if (data.needsRoleSelection) {
+        setPopup("Please select your role to continue...");
+        setTimeout(() => navigate("/auth/select-role", { state: { from: "/" } }), 1000);
+      } else {
+        setPopup("Logged in with Google! Redirecting...");
+        setTimeout(() => navigate("/"), 1000);
+      }
+    } catch (err: any) {
+      console.error("Google sign-in error:", err);
+      if (err.code === 'auth/popup-blocked') {
+        setPopup("Popup was blocked. Please allow popups for this site and try again, or use email/password login.");
+      } else {
+        setPopup(err.message || "Google sign-in failed");
+      }
+    }
+  };
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#020510] text-white">
+      <div className="pointer-events-none absolute inset-0 opacity-70">
+        <div className="absolute -left-16 -top-32 h-72 w-72 rounded-full bg-purple-600 blur-[140px]" />
+        <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-blue-500 blur-[140px]" />
+      </div>
+      <div className="relative z-10 mx-auto flex min-h-screen items-center justify-center px-4 py-12">
+        <div className="grid w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-lg lg:grid-cols-[1.1fr,0.9fr]">
+          <div className="hidden flex-col gap-6 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-500 p-10 text-white lg:flex">
+            <div className="inline-flex items-center gap-3 text-xs uppercase tracking-[0.5em] text-white/70">
+              <Sparkles className="h-4 w-4" />
+              creator access
             </div>
-            <h2 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent text-center">Welcome Back</h2>
-            <p className="text-gray-600 text-center mt-2">Sign in to your OneFame account</p>
+            <h2 className="text-4xl font-black leading-tight">Login & pick up where your collabs left off.</h2>
+            <p className="text-white/80">
+              Manage bookings, answer briefs, and stay synced with brands without leaving OneFame. Secure auth keeps every conversation private.
+            </p>
+            <div className="rounded-2xl bg-white/15 p-5">
+              <p className="text-xs uppercase tracking-[0.4em] text-white/70">why creators love it</p>
+              <ul className="mt-3 space-y-2 text-sm text-white/90">
+                <li>• All chats and invoices in one feed</li>
+                <li>• Onboard once, reuse everywhere</li>
+                <li>• Real-time signals for payments & briefs</li>
+              </ul>
+            </div>
           </div>
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                </svg>
-              </div>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email Address" className="w-full pl-12 pr-5 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-lg transition-all" />
+          <div className="bg-[#050713]/80 p-8">
+            <div className="mb-8">
+              <p className="text-xs uppercase tracking-[0.5em] text-white/40">welcome back</p>
+              <h1 className="mt-2 text-3xl font-semibold">Sign in to OneFame</h1>
+              <p className="text-sm text-white/60">Enter your credentials to access the dashboard.</p>
             </div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" className="w-full pl-12 pr-5 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-lg transition-all" />
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <label className="block text-sm font-medium text-white/70">
+                Email
+                <div className="mt-2 flex items-center rounded-2xl border border-white/15 bg-white/5 px-4">
+                  <Mail className="mr-3 h-4 w-4 text-white/50" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@email.com"
+                    autoComplete="email"
+                    className="h-12 flex-1 bg-transparent text-white placeholder:text-white/30 focus:outline-none"
+                  />
+                </div>
+              </label>
+              <label className="block text-sm font-medium text-white/70">
+                Password
+                <div className="mt-2 flex items-center rounded-2xl border border-white/15 bg-white/5 px-4">
+                  <Lock className="mr-3 h-4 w-4 text-white/50" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    className="h-12 flex-1 bg-transparent text-white placeholder:text-white/30 focus:outline-none"
+                  />
+                </div>
+              </label>
+              <button
+                type="submit"
+                className="w-full rounded-2xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-4 py-3 text-lg font-semibold text-white shadow-lg shadow-blue-900/40 transition hover:-translate-y-0.5"
+              >
+                Sign in
+              </button>
+              <button
+                type="button"
+                onClick={handleGoogle}
+                className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm font-semibold text-white/90 transition hover:bg-white/5"
+              >
+                Continue with Google
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/auth/PhoneLogin")}
+                className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm font-semibold text-white/90 transition hover:bg-white/5 flex items-center justify-center gap-2"
+              >
+                <Smartphone className="h-4 w-4" />
+                Continue with phone
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail("admin@onefame.com");
+                  setPassword("admin12");
+                  setPopup("");
+                }}
+                className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm font-semibold text-white/90 transition hover:bg-white/5 flex items-center justify-center gap-2"
+              >
+                <ArrowRight className="h-4 w-4" />
+                Admin access
+              </button>
+              {popup && (
+                <div
+                  className={`rounded-2xl px-4 py-3 text-center text-sm ${
+                    popup.toLowerCase().includes("success")
+                      ? "bg-emerald-500/10 text-emerald-300"
+                      : "bg-rose-500/10 text-rose-200"
+                  }`}
+                >
+                  {popup}
+                </div>
+              )}
+            </form>
+            <div className="mt-6 flex flex-col gap-2 text-sm text-white/60">
+              <button onClick={() => navigate("/auth/Signup")} className="text-white hover:text-cyan-300">
+                Need an account? <span className="font-semibold">Create one</span>
+              </button>
+              <button onClick={() => navigate("/auth/ForgotPassword")} className="text-white/50 hover:text-white">
+                Forgot password?
+              </button>
             </div>
-            <button type="submit" className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-2xl text-lg font-bold shadow-lg hover:from-blue-600 hover:to-cyan-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]">
-              Sign In
-            </button>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">or</span>
-              </div>
-            </div>
-            <button type="button" onClick={() => { setEmail('admin@onefame.com'); setPassword('admin12'); setPopup(''); }} className="w-full py-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-2xl text-lg font-bold shadow-lg hover:from-gray-900 hover:to-black transition-all transform hover:scale-[1.02] active:scale-[0.98]">
-              <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-              Admin Access
-            </button>
-            {popup && <div className={`mt-4 text-center px-6 py-3 rounded-2xl font-medium ${popup.includes('successfully') ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>{popup}</div>}
-          </form>
-          <div className="flex justify-between text-center mt-6">
-            <p className="text-gray-600">New to OneFame? <a href="/auth/Signup" className="text-blue-600 font-semibold hover:text-cyan-600 transition-colors">Create account</a></p>
-          </div>
-          <div className="text-center mt-4">
-            <a href="/auth/ForgotPassword" className="text-sm text-gray-500 hover:text-blue-600 transition-colors">Forgot your password?</a>
           </div>
         </div>
       </div>
-    );
-  })()
-);
+    </div>
+  );
+};
 
 export default Login;

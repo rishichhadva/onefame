@@ -14,6 +14,8 @@ export interface User {
   socials?: string;
   services?: string;
   createdAt?: string;
+  profile_photo?: string;
+  username?: string;
 }
 
 interface AuthContextType {
