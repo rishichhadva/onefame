@@ -41,14 +41,24 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Try to initialize Firebase Admin SDK if service account provided.
 // Use dynamic import so the server can run without the package installed.
 const loadServiceAccountJson = () => {
+  // Check if environment variable is set
   if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    console.log('📝 Found FIREBASE_SERVICE_ACCOUNT_JSON environment variable');
     return process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  } else {
+    console.warn('⚠️ FIREBASE_SERVICE_ACCOUNT_JSON environment variable is not set');
+    // Debug: log all env vars that start with FIREBASE
+    const firebaseVars = Object.keys(process.env).filter(k => k.startsWith('FIREBASE'));
+    if (firebaseVars.length > 0) {
+      console.log('Found Firebase-related env vars:', firebaseVars);
+    }
   }
   try {
     const saPath =
       process.env.FIREBASE_SERVICE_ACCOUNT_FILE ||
       path.join(__dirname, 'firebase-service-account.json');
     if (fs.existsSync(saPath)) {
+      console.log('📝 Found Firebase service account file:', saPath);
       return fs.readFileSync(saPath, 'utf8');
     }
   } catch (err) {
