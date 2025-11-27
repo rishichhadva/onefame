@@ -81,7 +81,10 @@ let admin;
       sa = JSON.parse(saJson);
     } catch (parseErr) {
       console.error('❌ Firebase Admin: Failed to parse JSON:', parseErr.message);
-      console.error('First 100 chars of value:', saJson.substring(0, 100));
+      console.error('JSON length:', saJson.length);
+      console.error('First 200 chars:', saJson.substring(0, 200));
+      console.error('Last 200 chars:', saJson.substring(Math.max(0, saJson.length - 200)));
+      console.error('⚠️ The JSON appears to be truncated. Make sure the entire JSON is pasted as a single line in Vercel.');
       return;
     }
     
