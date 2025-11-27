@@ -52,7 +52,7 @@ const SelectRole = () => {
 
       // Refresh user data and update context (only if update was successful)
       try {
-        const profileRes = await fetch("apiUrl("/api/")profile", {
+        const profileRes = await fetch(apiUrl("/api/profile"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (profileRes.ok) {

@@ -99,7 +99,7 @@ const CompleteProfile = () => {
         interests: form.interests.join(", "),
         skills: form.skills.join(", "),
       };
-      const res = await fetch("apiUrl("/api/")profile", {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
