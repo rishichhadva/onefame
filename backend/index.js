@@ -61,18 +61,32 @@ let admin;
 (async () => {
   try {
     const saJson = loadServiceAccountJson();
-    if (!saJson) return;
-    const sa = JSON.parse(saJson);
+    if (!saJson) {
+      console.warn('⚠️ Firebase Admin: FIREBASE_SERVICE_ACCOUNT_JSON not set or file not found');
+      return;
+    }
+    
+    let sa;
+    try {
+      sa = JSON.parse(saJson);
+    } catch (parseErr) {
+      console.error('❌ Firebase Admin: Failed to parse JSON:', parseErr.message);
+      console.error('First 100 chars of value:', saJson.substring(0, 100));
+      return;
+    }
+    
     try {
       const mod = await import('firebase-admin');
       admin = mod.default || mod;
       admin.initializeApp({ credential: admin.credential.cert(sa) });
-      console.log('Firebase Admin initialized');
-    } catch (err) {
-      console.warn('firebase-admin package not installed; skipping Firebase Admin init');
+      console.log('✅ Firebase Admin initialized successfully');
+    } catch (importErr) {
+      console.error('❌ Firebase Admin: Import/init error:', importErr.message);
+      console.error('Full error:', importErr);
     }
   } catch (err) {
-    console.warn('Firebase Admin init failed - set FIREBASE_SERVICE_ACCOUNT_JSON to enable');
+    console.error('❌ Firebase Admin init failed:', err.message);
+    console.error('Full error:', err);
   }
 })();
 
