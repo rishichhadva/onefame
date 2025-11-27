@@ -4,6 +4,7 @@ import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectRes
 import { auth } from "@/lib/firebase";
 import { useAuth } from "../../context/AuthContext";
 import { User, Mail, Lock, Users, Sparkles, ArrowRight, Briefcase, Megaphone } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 
 const Signup = () => {
   const { setUser } = useAuth();
@@ -26,7 +27,7 @@ const Signup = () => {
           sessionStorage.removeItem('pendingRole');
           
           const idToken = await result.user.getIdToken();
-          const res = await fetch("http://localhost:4000/api/auth/firebase", {
+          const res = await fetch(apiUrl("/api/auth/firebase"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ idToken, role: pendingRole }),
@@ -65,7 +66,7 @@ const Signup = () => {
       return;
     }
     try {
-      const res = await fetch("http://localhost:4000/api/register", {
+      const res = await fetch(apiUrl("/api/register"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, role }),
@@ -108,7 +109,7 @@ const Signup = () => {
       const idToken = await result.user.getIdToken();
       
       // Send to backend with role
-      const res = await fetch("http://localhost:4000/api/auth/firebase", {
+      const res = await fetch(apiUrl("/api/auth/firebase"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken, role }),

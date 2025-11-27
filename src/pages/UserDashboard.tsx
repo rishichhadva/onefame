@@ -1,4 +1,5 @@
 import React from 'react';
+import { apiUrl } from "@/lib/api";
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -13,7 +14,7 @@ const UserDashboard = () => {
     React.useEffect(() => {
       const fetchData = async () => {
         try {
-          const res = await fetch('http://localhost:4000/api/bookings');
+          const res = await fetch(apiUrl("/api/bookings"));
           setBookings(await res.json());
         } catch {
           setBookings([

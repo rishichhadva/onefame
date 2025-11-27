@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { CreditCard, Lock, Check, ArrowRight, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
+import { apiUrl } from "@/lib/api";
 
 declare global {
   interface Window {
@@ -80,7 +81,7 @@ const Checkout = () => {
       console.log('Creating Razorpay order with amount:', amount);
       
       // Create Razorpay order
-      const orderRes = await fetch('http://localhost:4000/api/payments/create-order', {
+      const orderRes = await fetch(apiUrl('/api/payments/create-order'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +124,7 @@ const Checkout = () => {
         handler: async function (response: any) {
           try {
             // Verify payment on backend
-            const verifyRes = await fetch('http://localhost:4000/api/payments/verify-payment', {
+            const verifyRes = await fetch(apiUrl('/api/payments/verify-payment'), {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -152,7 +153,7 @@ const Checkout = () => {
               amount: amount,
             };
 
-            const bookingRes = await fetch('http://localhost:4000/api/bookings', {
+            const bookingRes = await fetch(apiUrl('/api/bookings'), {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

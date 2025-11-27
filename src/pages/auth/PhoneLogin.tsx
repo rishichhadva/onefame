@@ -10,6 +10,7 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useAuth } from '../../context/AuthContext';
 import { Smartphone, Lock, Sparkles } from 'lucide-react';
+import { apiUrl } from '@/lib/api';
 
 const PhoneLogin = () => {
   const navigate = useNavigate();
@@ -124,7 +125,7 @@ const PhoneLogin = () => {
       const result = await confirmation.confirm(code);
       const idToken = await result.user.getIdToken();
       // send idToken to backend to create session (reuse firebase flow)
-      const res = await fetch('http://localhost:4000/api/auth/firebase', {
+      const res = await fetch(apiUrl('/api/auth/firebase'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken }),

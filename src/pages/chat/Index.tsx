@@ -5,9 +5,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { MessageSquare, Send, Search, User, Star, MapPin, Plus, Trash2, DollarSign, Calendar, FileText, MoreVertical, X, Check, XCircle } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 
 const fetchProviders = async () => {
-  const res = await fetch("http://localhost:4000/api/services");
+  const res = await fetch(apiUrl("/api/services"));
   if (!res.ok) throw new Error("Failed to load providers");
   return res.json();
 };
@@ -15,7 +16,7 @@ const fetchProviders = async () => {
 const fetchChats = async () => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
-  const res = await fetch("http://localhost:4000/api/chats", {
+  const res = await fetch(apiUrl("/api/chats"), {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("Failed to load chats");
@@ -25,7 +26,7 @@ const fetchChats = async () => {
 const fetchMessages = async (chatId: string) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
-  const res = await fetch(`http://localhost:4000/api/chats/${chatId}/messages`, {
+  const res = await fetch(apiUrl(`/api/chats/${chatId}/messages`), {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("Failed to load messages");
@@ -35,7 +36,7 @@ const fetchMessages = async (chatId: string) => {
 const createChat = async ({ providerEmail, providerName }: { providerEmail: string; providerName: string }) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
-  const res = await fetch("http://localhost:4000/api/chats", {
+  const res = await fetch(apiUrl("/api/chats"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -61,7 +62,7 @@ const createChat = async ({ providerEmail, providerName }: { providerEmail: stri
 const sendMessage = async ({ chatId, content }: { chatId: string; content: string }) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
-  const res = await fetch("http://localhost:4000/api/messages", {
+  const res = await fetch(apiUrl("/api/messages"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -79,7 +80,7 @@ const sendMessage = async ({ chatId, content }: { chatId: string; content: strin
 const deleteChat = async (chatId: string) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
-  const res = await fetch(`http://localhost:4000/api/chats/${chatId}`, {
+  const res = await fetch(apiUrl(`/api/chats/${chatId}`), {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });

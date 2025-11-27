@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiUrl } from "@/lib/api";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
@@ -18,7 +19,7 @@ const UserProfile = () => {
       if (!token) return;
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:4000/api/profile', {
+        const res = await fetch(apiUrl("/api/profile"), {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -37,7 +38,7 @@ const UserProfile = () => {
   const { data: services = [] } = useQuery({
     queryKey: ['user-services', profile?.name],
     queryFn: async () => {
-      const res = await fetch('http://localhost:4000/api/services');
+      const res = await fetch(apiUrl("/api/services"));
       if (!res.ok) throw new Error('Failed to fetch services');
       const data = await res.json();
       return data.filter((s: any) => 

@@ -12,9 +12,10 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { apiUrl } from "@/lib/api";
 
 const fetchServices = async () => {
-  const res = await fetch("http://localhost:4000/api/services");
+  const res = await fetch(apiUrl("/api/services"));
   if (!res.ok) throw new Error("Failed to load services");
   return res.json();
 };

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles, Flame, Star, ArrowUpRight, ChartPie } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
@@ -10,14 +11,14 @@ import Testimonials from "../components/Testimonials";
 import Footer from "../components/Footer";
 
 const fetchServices = async () => {
-  const res = await fetch("http://localhost:4000/api/services");
+  const res = await fetch(apiUrl("/api/services"));
   if (!res.ok) throw new Error("Failed to fetch services");
   return res.json();
 };
 
 const fetchAnalytics = async () => {
   try {
-    const res = await fetch("http://localhost:4000/api/admin/analytics");
+    const res = await fetch(apiUrl("/api/admin/analytics"));
     if (!res.ok) {
       // If unauthorized or forbidden, return null instead of throwing
       // This allows the component to use fallback values
@@ -36,7 +37,7 @@ const fetchAnalytics = async () => {
 };
 
 const fetchReviews = async () => {
-  const res = await fetch("http://localhost:4000/api/reviews");
+    const res = await fetch(apiUrl("/api/reviews"));
   if (!res.ok) throw new Error("Failed to fetch reviews");
   return res.json();
 };

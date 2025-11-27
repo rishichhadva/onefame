@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Sparkles, DollarSign, MapPin, Tag, MessageSquare, Plus, Edit } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { apiUrl } from '@/lib/api';
 
 const ProvideServices = () => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ const ProvideServices = () => {
       
       if (editingService) {
         // Update existing service
-        const res = await fetch(`http://localhost:4000/api/services/${editingService.id}`, {
+        const res = await fetch(`apiUrl("/api/")services/${editingService.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ const ProvideServices = () => {
         setPopup('Service updated successfully!');
       } else {
         // Create new service
-        const res = await fetch('http://localhost:4000/api/services', {
+        const res = await fetch(apiUrl("/api/")services"), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

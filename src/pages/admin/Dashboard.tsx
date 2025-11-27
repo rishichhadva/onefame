@@ -28,7 +28,7 @@ import {
   Save,
 } from 'lucide-react';
 
-const API_BASE = "http://localhost:4000";
+import { API_BASE } from '@/lib/api';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');

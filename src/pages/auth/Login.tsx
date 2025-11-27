@@ -4,6 +4,7 @@ import { auth } from "@/lib/firebase";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, Smartphone, Sparkles, ArrowRight } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 
 const Login = () => {
   const location = useLocation();
@@ -18,7 +19,7 @@ const Login = () => {
     setPopup("");
     try {
       // Always use the backend login endpoint, even for admin
-      const res = await fetch("http://localhost:4000/api/login", {
+      const res = await fetch(apiUrl("/api/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -34,7 +35,7 @@ const Login = () => {
       localStorage.setItem("token", data.token);
       
       // Fetch user profile to get full user data
-      const profileRes = await fetch("http://localhost:4000/api/profile", {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         method: "GET",
         headers: { Authorization: `Bearer ${data.token}` },
       });
@@ -81,7 +82,7 @@ const Login = () => {
       }
       
       const idToken = await result.user.getIdToken();
-      const res = await fetch("http://localhost:4000/api/auth/firebase", {
+      const res = await fetch(apiUrl("/api/auth/firebase"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),

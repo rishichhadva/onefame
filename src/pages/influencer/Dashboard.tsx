@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import InfluencerNavbar from '../../components/InfluencerNavbar';
+import { apiUrl } from '@/lib/api';
 // Store native Image constructor before lucide-react import shadows it
 const NativeImage = window.Image;
 import {
@@ -64,7 +65,7 @@ const InfluencerDashboard: React.FC = () => {
     const fetchProfile = async () => {
       const token = localStorage.getItem('token');
       if (token) {
-        const res = await fetch('http://localhost:4000/api/profile', {
+        const res = await fetch(apiUrl("/api/profile"), {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -246,7 +247,7 @@ const InfluencerDashboard: React.FC = () => {
 
     // Check current portfolio count - refresh profile first to ensure accurate count and clean data
     try {
-      const profileCheckRes = await fetch('http://localhost:4000/api/profile', {
+      const profileCheckRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileCheckRes.ok) {
@@ -306,7 +307,7 @@ const InfluencerDashboard: React.FC = () => {
       console.log('Uploading image, size:', imageToSave.length, 'starts with data:image/:', imageToSave.startsWith('data:image/'));
       
       // Upload immediately to backend
-      const res = await fetch('http://localhost:4000/api/profile/portfolio', {
+      const res = await fetch(apiUrl("/api/profile/portfolio"), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -344,7 +345,7 @@ const InfluencerDashboard: React.FC = () => {
       console.log('Upload response:', responseData);
       
       // Refresh profile to get updated portfolio images
-      const profileRes = await fetch('http://localhost:4000/api/profile', {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileRes.ok) {
@@ -403,7 +404,7 @@ const InfluencerDashboard: React.FC = () => {
       // Delete images from backend (by index)
       for (const index of sortedIndices) {
         if (index < imagesArray.length) {
-          const res = await fetch(`http://localhost:4000/api/profile/portfolio/${index}`, {
+          const res = await fetch(`apiUrl("/api/profile/portfolio/${index}`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`
@@ -417,7 +418,7 @@ const InfluencerDashboard: React.FC = () => {
       }
 
       // Refresh profile to get updated portfolio images
-      const profileRes = await fetch('http://localhost:4000/api/profile', {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileRes.ok) {
@@ -471,7 +472,7 @@ const InfluencerDashboard: React.FC = () => {
       setPopup('Removing all images...');
       
       // Directly update portfolio_images to empty array using profile update endpoint
-      const res = await fetch('http://localhost:4000/api/profile', {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -492,7 +493,7 @@ const InfluencerDashboard: React.FC = () => {
       }
 
       // Refresh profile to get updated portfolio images
-      const profileRes = await fetch('http://localhost:4000/api/profile', {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileRes.ok) {
@@ -546,7 +547,7 @@ const InfluencerDashboard: React.FC = () => {
         updateBody.instagram_handle = instagramHandle;
       }
       
-      const res = await fetch('http://localhost:4000/api/profile', {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -567,7 +568,7 @@ const InfluencerDashboard: React.FC = () => {
       }
 
       // Refresh profile to get updated data
-      const refreshRes = await fetch('http://localhost:4000/api/profile', {
+      const refreshRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (refreshRes.ok) {
@@ -632,7 +633,7 @@ const InfluencerDashboard: React.FC = () => {
     setPopup('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:4000/api/profile', {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -654,7 +655,7 @@ const InfluencerDashboard: React.FC = () => {
       if (!res.ok) throw new Error(data.error || 'Profile update failed');
       
       // Refresh profile to get updated data
-      const profileRes = await fetch('http://localhost:4000/api/profile', {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileRes.ok) {
@@ -1313,7 +1314,7 @@ const InfluencerDashboard: React.FC = () => {
                         setPopup('Please log in to change account type');
                         return;
                       }
-                      const res = await fetch('http://localhost:4000/api/profile', {
+                      const res = await fetch(apiUrl("/api/profile"), {
                         method: 'PUT',
                         headers: {
                           'Content-Type': 'application/json',

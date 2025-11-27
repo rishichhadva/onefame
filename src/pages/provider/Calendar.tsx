@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Calendar } from '@/components/ui/calendar';
 import { ArrowLeft, CalendarDays, Clock, User, Briefcase, DollarSign, ExternalLink, Link2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { apiUrl } from '@/lib/api';
 
 const ProviderCalendar = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const ProviderCalendar = () => {
     const fetchBookings = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:4000/api/bookings', {
+        const res = await fetch(apiUrl("/api/")bookings"), {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
         const data = await res.json();

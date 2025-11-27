@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Search as SearchIcon, MapPin, Star, Camera, Video, Palette, Sparkles } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 
 const Search = () => {
   const navigate = useNavigate();
@@ -88,7 +89,7 @@ const Search = () => {
 
   const fetchAll = async () => {
     try {
-      const res = await fetch('http://localhost:4000/api/services');
+      const res = await fetch(apiUrl('/api/services'));
       setServices(await res.json());
     } catch {
       setServices([]);
@@ -97,7 +98,7 @@ const Search = () => {
 
   const handleSearch = async () => {
     try {
-      const res = await fetch('http://localhost:4000/api/services');
+      const res = await fetch(apiUrl('/api/services'));
       let all = await res.json();
       if (query) {
         all = all.filter(s =>
@@ -115,7 +116,7 @@ const Search = () => {
 
   const handleApplyFilters = async () => {
     try {
-      const res = await fetch('http://localhost:4000/api/services');
+      const res = await fetch(apiUrl('/api/services'));
       let all = await res.json();
       if (category) {
         all = all.filter(s => s.category === category);

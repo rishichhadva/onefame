@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import ProviderNavbar from '../../components/ProviderNavbar';
+import { apiUrl } from '@/lib/api';
 // Store native Image constructor before lucide-react import shadows it
 const NativeImage = window.Image;
 import {
@@ -69,7 +70,7 @@ const ProviderDashboard: React.FC = () => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const res = await fetch('http://localhost:4000/api/profile', {
+          const res = await fetch(apiUrl("/api/profile"), {
             headers: { Authorization: `Bearer ${token}` }
           });
           
@@ -151,7 +152,7 @@ const ProviderDashboard: React.FC = () => {
         const token = localStorage.getItem('token');
         // Fetch influencers (users with role 'influencer') - real-time
         try {
-          const influencersRes = await fetch('http://localhost:4000/api/users/influencers', {
+          const influencersRes = await fetch(apiUrl("/api/users/influencers"), {
             headers: token ? { Authorization: `Bearer ${token}` } : {},
             cache: 'no-cache'
           });
@@ -165,7 +166,7 @@ const ProviderDashboard: React.FC = () => {
         }
         
         // Fetch services and filter by provider
-        const servicesRes = await fetch('http://localhost:4000/api/services');
+        const servicesRes = await fetch(apiUrl("/api/services"));
         const servicesData = await servicesRes.json();
         const providerServices = Array.isArray(servicesData)
           ? servicesData.filter((s: any) =>
@@ -218,7 +219,7 @@ const ProviderDashboard: React.FC = () => {
         body.profile_photo = profilePhoto;
       }
 
-      const res = await fetch('http://localhost:4000/api/profile', {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -259,7 +260,7 @@ const ProviderDashboard: React.FC = () => {
       }
       
       // Refresh profile to get updated data from server
-      const profileRes = await fetch('http://localhost:4000/api/profile', {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileRes.ok) {
@@ -334,7 +335,7 @@ const ProviderDashboard: React.FC = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:4000/api/services/${serviceId}`, {
+      const res = await fetch(`apiUrl("/api/")services/${serviceId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -482,7 +483,7 @@ const ProviderDashboard: React.FC = () => {
 
     // Check current portfolio count - refresh profile first to ensure accurate count
     try {
-      const profileCheckRes = await fetch('http://localhost:4000/api/profile', {
+      const profileCheckRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileCheckRes.ok) {
@@ -530,7 +531,7 @@ const ProviderDashboard: React.FC = () => {
         : `data:image/jpeg;base64,${compressedBase64}`;
       
       // Upload immediately to backend
-      const res = await fetch('http://localhost:4000/api/profile/portfolio', {
+      const res = await fetch(apiUrl("/api/profile/portfolio"), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -560,7 +561,7 @@ const ProviderDashboard: React.FC = () => {
       }
 
       // Refresh profile to get updated portfolio images
-      const profileRes = await fetch('http://localhost:4000/api/profile', {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileRes.ok) {
@@ -655,7 +656,7 @@ const ProviderDashboard: React.FC = () => {
       // Delete images from backend (by index)
       for (const index of sortedIndices) {
         if (index < imagesArray.length) {
-          const res = await fetch(`http://localhost:4000/api/profile/portfolio/${index}`, {
+          const res = await fetch(`apiUrl("/api/")profile/portfolio/${index}`, {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`
@@ -669,7 +670,7 @@ const ProviderDashboard: React.FC = () => {
       }
 
       // Refresh profile to get updated portfolio images
-      const profileRes = await fetch('http://localhost:4000/api/profile', {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileRes.ok) {
@@ -721,7 +722,7 @@ const ProviderDashboard: React.FC = () => {
         updateBody.instagram_handle = instagramHandle;
       }
       
-      const res = await fetch('http://localhost:4000/api/profile', {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -742,7 +743,7 @@ const ProviderDashboard: React.FC = () => {
       }
 
       // Refresh profile to get updated data
-      const refreshRes = await fetch('http://localhost:4000/api/profile', {
+      const refreshRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (refreshRes.ok) {
@@ -783,7 +784,7 @@ const ProviderDashboard: React.FC = () => {
   const handleUpdateService = async (serviceId: number, updates: any) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:4000/api/services/${serviceId}`, {
+      const res = await fetch(`apiUrl("/api/")services/${serviceId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -794,7 +795,7 @@ const ProviderDashboard: React.FC = () => {
       
       if (res.ok) {
         // Refresh services
-        const servicesRes = await fetch('http://localhost:4000/api/services');
+        const servicesRes = await fetch(apiUrl("/api/services"));
         const servicesData = await servicesRes.json();
         const providerServices = Array.isArray(servicesData)
           ? servicesData.filter((s: any) =>
@@ -1401,7 +1402,7 @@ const ProviderDashboard: React.FC = () => {
                         setPopup('Please log in to change account type');
                         return;
                       }
-                      const res = await fetch('http://localhost:4000/api/profile', {
+                      const res = await fetch(apiUrl("/api/profile"), {
                         method: 'PUT',
                         headers: {
                           'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { apiUrl } from '@/lib/api';
 
 const ReviewsPage = () => {
   const [reviews, setReviews] = React.useState([]);
@@ -8,7 +9,7 @@ const ReviewsPage = () => {
   React.useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await fetch('http://localhost:4000/api/reviews');
+        const res = await fetch(apiUrl('/api/reviews'));
         setReviews(await res.json());
       } catch {
         setReviews([]);
@@ -24,13 +25,13 @@ const ReviewsPage = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await fetch('http://localhost:4000/api/reviews', {
+      await fetch(apiUrl('/api/reviews'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
       setForm({ reviewer: '', reviewee: '', rating: '', comment: '' });
-      const res = await fetch('http://localhost:4000/api/reviews');
+      const res = await fetch(apiUrl('/api/reviews'));
       setReviews(await res.json());
     } catch {}
   };

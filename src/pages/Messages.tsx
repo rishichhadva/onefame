@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Paperclip, Image, MoreVertical } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 
 interface Chat {
   id: string;
@@ -32,7 +33,7 @@ const Messages = () => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const res = await fetch('http://localhost:4000/api/chats');
+        const res = await fetch(apiUrl('/api/chats'));
         const data = await res.json();
         setChats(data);
         if (data && data.length > 0) setSelectedChat(data[0].id);
@@ -47,7 +48,7 @@ const Messages = () => {
     const fetchMessages = async () => {
       if (!selectedChat) return;
       try {
-        const res = await fetch(`http://localhost:4000/api/chats/${selectedChat}/messages`);
+        const res = await fetch(apiUrl(`/api/chats/${selectedChat}/messages`));
         const data = await res.json();
         setMessages(data);
       } catch (err) {
@@ -63,7 +64,7 @@ const Messages = () => {
   const handleSendMessage = () => {
     if (!messageInput.trim() || !selectedChat) return;
     const payload = { chatId: selectedChat, sender: 'me', content: messageInput };
-    fetch('http://localhost:4000/api/messages', {
+    fetch(apiUrl('/api/messages'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

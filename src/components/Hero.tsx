@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { apiUrl } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -11,7 +12,7 @@ const Hero = () => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
-      const res = await fetch("http://localhost:4000/api/profile", {
+      const res = await fetch("apiUrl("/api/")profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

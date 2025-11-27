@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import InfluencerNavbar from '../../components/InfluencerNavbar';
 import { ArrowLeft, Heart, CalendarDays, Star, CheckCircle2, Upload, UserCircle, Edit, Save } from 'lucide-react';
+import { apiUrl } from '@/lib/api';
 
 const InfluencerProfile = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const InfluencerProfile = () => {
       if (!token) return;
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:4000/api/profile', {
+        const res = await fetch(apiUrl("/api/profile"), {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -171,7 +172,7 @@ const InfluencerProfile = () => {
         body.profile_photo = profilePhoto;
       }
 
-      const res = await fetch('http://localhost:4000/api/profile', {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -186,7 +187,7 @@ const InfluencerProfile = () => {
       }
 
       // Refresh profile
-      const profileRes = await fetch('http://localhost:4000/api/profile', {
+      const profileRes = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (profileRes.ok) {

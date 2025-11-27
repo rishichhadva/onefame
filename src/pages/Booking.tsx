@@ -9,21 +9,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Check, CalendarDays, Clock, ArrowRight, User, Star, MapPin, Search, MessageSquare, Image, Instagram, Eye, X, TrendingUp, Sparkles } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 
 const fetchServices = async () => {
-  const res = await fetch("http://localhost:4000/api/services");
+  const res = await fetch(apiUrl("/api/services"));
   if (!res.ok) throw new Error("Failed to load services");
   return res.json();
 };
 
 const fetchInfluencers = async () => {
-  const res = await fetch("http://localhost:4000/api/users/influencers");
+  const res = await fetch(apiUrl("/api/users/influencers"));
   if (!res.ok) throw new Error("Failed to load influencers");
   return res.json();
 };
 
 const fetchProviderProfile = async (name: string) => {
-  const res = await fetch(`http://localhost:4000/api/user/${encodeURIComponent(name)}`);
+  const res = await fetch(apiUrl(`/api/user/${encodeURIComponent(name)}`));
   if (!res.ok) return null;
   const profile = await res.json();
   // Parse portfolio_images if it's a string

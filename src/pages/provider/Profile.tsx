@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ArrowLeft, Image, DollarSign, Star, CalendarDays, Upload, X, Trash2 } from 'lucide-react';
+import { apiUrl } from '@/lib/api';
 
 const ProviderProfile = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const ProviderProfile = () => {
       if (!token) return;
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:4000/api/profile', {
+        const res = await fetch(apiUrl("/api/profile"), {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -56,7 +57,7 @@ const ProviderProfile = () => {
       reader.onloadend = async () => {
         const base64Image = reader.result as string;
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:4000/api/profile/portfolio', {
+        const res = await fetch(apiUrl("/api/profile/portfolio"), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -87,7 +88,7 @@ const ProviderProfile = () => {
 
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:4000/api/profile/portfolio/${index}`, {
+      const res = await fetch(`apiUrl("/api/")profile/portfolio/${index}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

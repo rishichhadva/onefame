@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiUrl } from "@/lib/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Briefcase, Megaphone, Sparkles, ArrowRight } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -29,7 +30,7 @@ const SelectRole = () => {
       }
 
       // Update role
-      const res = await fetch("http://localhost:4000/api/profile", {
+      const res = await fetch("apiUrl("/api/")profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +52,7 @@ const SelectRole = () => {
 
       // Refresh user data and update context (only if update was successful)
       try {
-        const profileRes = await fetch("http://localhost:4000/api/profile", {
+        const profileRes = await fetch("apiUrl("/api/")profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (profileRes.ok) {

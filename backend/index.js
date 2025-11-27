@@ -2060,15 +2060,22 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found', path: req.path, method: req.method });
 });
 
-app.listen(4000, () => {
-  console.log('✓ Backend running on http://localhost:4000');
-  console.log('✓ Available endpoints:');
-  console.log('  - GET  /api/admin/users (requires admin)');
-  console.log('  - GET  /api/admin/services (requires admin)');
-  console.log('  - GET  /api/admin/bookings (requires admin)');
-  console.log('  - GET  /api/admin/analytics (requires admin)');
-  console.log('  - POST /api/track-view');
-  console.log('  - GET  /api/views');
-  console.log('  - POST /api/payments/create-order');
-  console.log('  - POST /api/payments/verify-payment');
-});
+// Only start server if not in Vercel/serverless environment
+if (process.env.VERCEL !== '1' && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`✓ Backend running on http://localhost:${PORT}`);
+    console.log('✓ Available endpoints:');
+    console.log('  - GET  /api/admin/users (requires admin)');
+    console.log('  - GET  /api/admin/services (requires admin)');
+    console.log('  - GET  /api/admin/bookings (requires admin)');
+    console.log('  - GET  /api/admin/analytics (requires admin)');
+    console.log('  - POST /api/track-view');
+    console.log('  - GET  /api/views');
+    console.log('  - POST /api/payments/create-order');
+    console.log('  - POST /api/payments/verify-payment');
+  });
+}
+
+// Export app for Vercel serverless functions
+export default app;

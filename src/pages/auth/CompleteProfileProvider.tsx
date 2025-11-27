@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiUrl } from "@/lib/api";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -22,7 +23,7 @@ const CompleteProfileProvider = () => {
     }
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:4000/api/profile', {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

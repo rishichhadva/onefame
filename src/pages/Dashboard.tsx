@@ -25,7 +25,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const API_BASE = "http://localhost:4000";
+import { API_BASE } from '@/lib/api';
 
 const fetchWithAuth = async (path: string, token: string | null) => {
   if (!token) throw new Error("Not authenticated");

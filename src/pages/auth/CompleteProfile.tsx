@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { apiUrl } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Rocket, Sparkles, Star, CheckCircle2 } from "lucide-react";
 
@@ -42,7 +43,7 @@ const CompleteProfile = () => {
     }
     const bootstrap = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/profile", {
+        const res = await fetch("apiUrl("/api/")profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -98,7 +99,7 @@ const CompleteProfile = () => {
         interests: form.interests.join(", "),
         skills: form.skills.join(", "),
       };
-      const res = await fetch("http://localhost:4000/api/profile", {
+      const res = await fetch("apiUrl("/api/")profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
