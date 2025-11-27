@@ -2,14 +2,21 @@
 import app from '../backend/index.js';
 
 // Vercel serverless function handler
-// Vercel routes /api/* requests to this function
-// The Express app already has routes defined with /api/ prefix
-export default async (req, res) => {
-  // Log for debugging
-  console.log(`[API] ${req.method} ${req.url}`);
+// Vercel routes /api/* to this function
+export default (req, res) => {
+  // Vercel might pass the path without /api prefix in some cases
+  // Ensure req.url has /api prefix for Express routes
+  const originalUrl = req.url || req.path || '/';
   
-  // Vercel passes the full path including /api, so Express routes should match
-  // Handle the request with Express app
-  app(req, res);
+  if (!originalUrl.startsWith('/api')) {
+    req.url = `/api${originalUrl}`;
+    req.path = `/api${originalUrl}`;
+  }
+  
+  // Log for debugging
+  console.log(`[Vercel API Handler] ${req.method} ${req.url} (original: ${originalUrl})`);
+  
+  // Delegate to Express app
+  return app(req, res);
 };
 
