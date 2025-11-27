@@ -88,7 +88,7 @@ const ProviderProfile = () => {
 
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`apiUrl("/api/")profile/portfolio/${index}`, {
+      const res = await fetch(apiUrl(`/api/profile/portfolio/${index}`), {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

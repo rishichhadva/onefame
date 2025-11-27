@@ -12,7 +12,7 @@ const Hero = () => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
-      const res = await fetch("apiUrl("/api/")profile", {
+      const res = await fetch(apiUrl("/api/profile"), {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

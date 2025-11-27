@@ -30,7 +30,7 @@ const SelectRole = () => {
       }
 
       // Update role
-      const res = await fetch("apiUrl("/api/")profile", {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

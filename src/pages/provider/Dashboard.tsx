@@ -335,7 +335,7 @@ const ProviderDashboard: React.FC = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`apiUrl("/api/")services/${serviceId}`, {
+      const res = await fetch(apiUrl(`/api/services/${serviceId}`), {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -656,7 +656,7 @@ const ProviderDashboard: React.FC = () => {
       // Delete images from backend (by index)
       for (const index of sortedIndices) {
         if (index < imagesArray.length) {
-          const res = await fetch(`apiUrl("/api/")profile/portfolio/${index}`, {
+          const res = await fetch(apiUrl(`/api/profile/portfolio/${index}`), {
             method: 'DELETE',
             headers: {
               'Authorization': `Bearer ${token}`
@@ -784,7 +784,7 @@ const ProviderDashboard: React.FC = () => {
   const handleUpdateService = async (serviceId: number, updates: any) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`apiUrl("/api/")services/${serviceId}`, {
+      const res = await fetch(apiUrl(`/api/services/${serviceId}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

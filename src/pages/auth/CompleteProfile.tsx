@@ -43,7 +43,7 @@ const CompleteProfile = () => {
     }
     const bootstrap = async () => {
       try {
-        const res = await fetch("apiUrl("/api/")profile", {
+        const res = await fetch(apiUrl("/api/profile"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

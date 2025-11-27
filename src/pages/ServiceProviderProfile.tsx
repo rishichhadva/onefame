@@ -99,7 +99,7 @@ const ServiceProviderProfile = () => {
     const fetchService = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`apiUrl("/api/")services/${id}`);
+        const res = await fetch(apiUrl(`/api/services/${id}`));
         if (res.ok) {
           const data = await res.json();
           setService(data);

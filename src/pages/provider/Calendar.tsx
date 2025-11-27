@@ -20,7 +20,7 @@ const ProviderCalendar = () => {
     const fetchBookings = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(apiUrl("/api/")bookings"), {
+        const res = await fetch(apiUrl("/api/bookings"), {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
         const data = await res.json();
