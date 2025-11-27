@@ -344,8 +344,11 @@ app.post('/api/auth/firebase', async (req, res) => {
   if (!idToken) return res.status(400).json({ error: 'Missing idToken' });
   try {
     if (!admin?.apps?.length) {
-      console.error('Firebase Admin not configured. Set FIREBASE_SERVICE_ACCOUNT_JSON.');
-      return res.status(500).json({ error: 'Firebase Admin not configured' });
+      console.warn('Firebase Admin not configured. Phone/Google auth will not work. Set FIREBASE_SERVICE_ACCOUNT_JSON in environment variables.');
+      return res.status(503).json({ 
+        error: 'Firebase Admin not configured',
+        message: 'Please set FIREBASE_SERVICE_ACCOUNT_JSON environment variable'
+      });
     }
     const decoded = await admin.auth().verifyIdToken(idToken);
     const phone = decoded.phone_number || null;
