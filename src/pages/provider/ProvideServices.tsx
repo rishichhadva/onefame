@@ -40,7 +40,7 @@ const ProvideServices = () => {
       
       if (editingService) {
         // Update existing service
-        const res = await fetch(`apiUrl("/api/")services/${editingService.id}`, {
+        const res = await fetch(apiUrl(`/api/services/${editingService.id}`), {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const ProvideServices = () => {
         setPopup('Service updated successfully!');
       } else {
         // Create new service
-        const res = await fetch(apiUrl("/api/")services"), {
+        const res = await fetch(apiUrl("/api/services"), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
