@@ -82,9 +82,14 @@ let admin;
     } catch (parseErr) {
       console.error('❌ Firebase Admin: Failed to parse JSON:', parseErr.message);
       console.error('JSON length:', saJson.length);
+      console.error('Expected length: ~1800-2000 characters');
       console.error('First 200 chars:', saJson.substring(0, 200));
       console.error('Last 200 chars:', saJson.substring(Math.max(0, saJson.length - 200)));
-      console.error('⚠️ The JSON appears to be truncated. Make sure the entire JSON is pasted as a single line in Vercel.');
+      if (saJson.length < 1500) {
+        console.error('⚠️ JSON is too short - it appears to be truncated!');
+        console.error('⚠️ Make sure you paste the COMPLETE JSON as a single line in Vercel.');
+        console.error('⚠️ The JSON should end with: ...googleapis.com"}');
+      }
       return;
     }
     

@@ -6,22 +6,24 @@ let poolConfig;
 if (process.env.DATABASE_URL) {
   // Use connection string (Supabase format)
   const dbUrl = process.env.DATABASE_URL;
-  console.log('📝 Using DATABASE_URL (first 50 chars):', dbUrl.substring(0, 50) + '...');
   
-  // Fix common Supabase URL issues
-  let fixedUrl = dbUrl;
+  // Log URL without password for debugging
+  const urlWithoutPassword = dbUrl.replace(/:[^:@]+@/, ':****@');
+  console.log('📝 Using DATABASE_URL:', urlWithoutPassword);
   
-  // If URL is missing protocol, add it
-  if (!fixedUrl.startsWith('postgres://') && !fixedUrl.startsWith('postgresql://')) {
-    // Try to detect if it's a Supabase format and fix it
-    if (fixedUrl.includes('supabase')) {
-      console.warn('⚠️ DATABASE_URL might be missing protocol. Expected format: postgresql://user:pass@host:port/db');
-    }
+  // Extract hostname for debugging
+  try {
+    const urlObj = new URL(dbUrl);
+    console.log('📝 Database hostname:', urlObj.hostname);
+    console.log('📝 Database port:', urlObj.port || '5432 (default)');
+  } catch (e) {
+    console.error('❌ Invalid DATABASE_URL format:', e.message);
+    console.error('Expected format: postgresql://user:password@host:port/database');
   }
   
   poolConfig = {
-    connectionString: fixedUrl,
-    ssl: fixedUrl.includes('supabase') ? { rejectUnauthorized: false } : false,
+    connectionString: dbUrl,
+    ssl: dbUrl.includes('supabase') ? { rejectUnauthorized: false } : false,
   };
 } else {
   // Use individual variables
